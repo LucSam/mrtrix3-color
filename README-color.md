@@ -94,11 +94,3 @@ The changes are primarily implemented in `src/gui/mrview/tool/tractography/tract
    ```
 
 The color map (out2.bmp) should be located in the repository root directory after cloning.
-
-## Benefits
-
-This enhanced color mapping provides several advantages:
-- Improved visual differentiation between fiber bundles
-- Better perception of fiber orientations
-- Enhanced visualization for research and clinical applications
-- Real-time performance without preprocessing
