@@ -1,12 +1,12 @@
 # MRTrix3 Color Mapping Enhancement
 
-This fork of MRTrix3 implements a custom color mapping system for fiber tractography visualization. It replaces the standard RGB directional encoding with a perceptually optimized color scheme via a lookup table.
+This fork of MRTrix3 implements a custom color mapping system for fiber tractography visualization. It replaces the standard RGB directional encoding with a perceptually optimized color scheme (CMYK-like) via a lookup table.
 
 ## Implementation Details
 
 ### Overview
 
-The implementation transforms the standard RGB directional encoding of fiber tracts into a custom color space using a 3D lookup table stored as a BMP file. This enhances visual differentiation between fiber bundles with similar orientations.
+The implementation transforms the standard RGB directional encoding of fiber tracts into a custom color space using a 3D lookup table stored as a BMP file. This enhances visual differentiation between fiber bundles with similar orientations using a CMYK-like color scheme, allowing for more intuitive interpretation as colors blend additively like pigments in real life, unlike the subtractive RGB color space.
 
 ### Technical Implementation
 
