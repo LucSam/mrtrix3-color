@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MRTrix3 Color Mapping Visualization</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .comparison {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .image-container {
+            text-align: center;
+            flex: 1;
+            min-width: 300px;
+        }
+        .image-placeholder {
+            width: 400px;
+            height: 320px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+        }
+        .math-box {
+            background-color: #f9f9f9;
+            border-left: 5px solid #2c3e50;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .caption {
+            margin-top: 10px;
+            font-style: italic;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MRTrix3 Color Mapping Enhancement</h1>
+            <p>This document describes the custom color mapping system implemented in a fork of MRTrix3 for enhanced fiber tractography visualization, replacing the standard RGB directional encoding with a perceptually optimized CMYK-like color scheme.</p>
+        </header>
+
+        <section>
+            <h2>Color Transformation Process</h2>
+            <p>The transformation from standard RGB directional encoding to the custom color space involves a lookup table stored in a BMP file. The process works as follows:</p>
+            
+            <div class="math-box">
+                <h3>RGB to Index Conversion</h3>
+                <p>Each fiber direction's RGB components (ranging from 0-1) are converted to a single integer index:</p>
+                <p><strong>pos = int(colour.r*255) + int(colour.g*255)*256 + int(colour.b*255)*65536</strong></p>
+                <p>This creates a unique position in the lookup table for each possible RGB combination.</p>
+                
+                <h3>Color Lookup</h3>
+                <p>The calculated position is used to retrieve a new color from the lookup table:</p>
+                <p><strong>colour.r = texelFetch(u_color_mapper, 3*(pos+18)).r</strong><br>
+                <strong>colour.g = texelFetch(u_color_mapper, 3*(pos+18)+1).r</strong><br>
+                <strong>colour.b = texelFetch(u_color_mapper, 3*(pos+18)+2).r</strong></p>
+                <p>Where the offset (18) accounts for the BMP file header.</p>
+            </div>
+
+            <h3>GLSL Implementation</h3>
+            <pre><code>int pos = int(colour.r*255) + int(colour.g*255)*256 + int(colour.b*255)*65536;
+colour.r = texelFetch(u_color_mapper, 3*(pos+18)).r;
+colour.g = texelFetch(u_color_mapper, 3*(pos+18)+1).r;
+colour.b = texelFetch(u_color_mapper, 3*(pos+18)+2).r;</code></pre>
+        </section>
+
+        <section>
+            <h2>RGB vs CMYK-like Color Comparison</h2>
+            <p>Below is a comparison of tract visualization using the standard RGB directional encoding versus the enhanced CMYK-like color mapping.</p>
+            
+            <div class="comparison">
+                <div class="image-container">
+                    <h3>Standard RGB Encoding (2D)</h3>
+                    <img src="./screenshots/rgb/2d/1M0000.png" alt="RGB 2D View of 1M.tck" />
+                    <p class="caption">Standard RGB coloring (2D axial view)</p>
+                </div>
+                
+                <div class="image-container">
+                    <h3>Enhanced CMYK-like Encoding (2D)</h3>
+                    <img src="./screenshots/cmyk/2d/1M0000.png" alt="CMYK 2D View of 1M.tck" />
+                    <p class="caption">CMYK-like coloring (2D axial view)</p>
+                </div>
+            </div>
+            
+            <div class="image-container">
+                <h3>BMP Lookup Table Visualization (out2.bmp)</h3>
+                <img src="./out2.bmp" alt="CMYK Lookup Table" style="max-width: 600px;" />
+                <p class="caption">The BMP lookup table used for color transformation</p>
+            </div>
+        </section>
+
+
+
+        <footer>
+        </footer>
+    </div>
+</body>
+</html>
